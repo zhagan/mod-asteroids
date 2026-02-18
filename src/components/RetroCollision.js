@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
   AudioProvider,
   useModStream,
@@ -9,7 +9,6 @@ import {
   Mixer,
   Monitor,
   ADSR,
-  LFO,
 } from '@mode-7/mod';
 
 // RetroCollision: short, impactful, retro collision sound
@@ -21,32 +20,37 @@ export function RetroCollision({ trigger, intensity = 1 }) {
   const filtered = useModStream();
   const vca = useModStream();
   const env = useModStream();
-  const lfo = useModStream();
-  const lfoVca = useModStream();
+  const controlsRef = useRef();
 
-  const [gate, setGate] = useState(0);
   const adsrParams = useMemo(() => ({
     attack: 0.002,
     decay: 0.22 + 0.12 * (1 - intensity), // longer decay for impact
     sustain: 1.0,
-    release: 2 ,
+    release: 2,
   }), [intensity]);
-
-  useEffect(() => {
-    console.log('trigger collision', trigger);
-    setGate(trigger ? 1 : 0);
-  }, [trigger]);
 
   // Lower base frequency, more pitch drop for a "thud"
   const baseFreq = useMemo(() => 110 + 60 * intensity, [intensity]);
   const oscPitchMod = useMemo(() => 180 + 60 * intensity, [intensity]);
 
+  useEffect(() => {
+    if (trigger && controlsRef.current) {
+      controlsRef.current.trigger();
+      setTimeout(() => {
+          controlsRef.current.releaseGate();
+      }, 100); // slight delay to ensure envelope retriggers properly
+    }
+  }, [trigger]);
+
   return (
     <>
       {/* Envelope for amplitude */}
-      <LFO output={lfo} frequency={1} waveform="sawtooth" direction="down" />
-      <VCA input={lfo} output={lfoVca} gain={gate} />
-      <ADSR output={env} {...adsrParams} gate={lfoVca} />
+      <ADSR output={env} {...adsrParams}>
+        {(controls) => {
+          controlsRef.current = controls;
+          return null;
+        }}
+      </ADSR>
       {/* Oscillator for impact body */}
       <ToneGenerator
         output={osc}
@@ -58,7 +62,6 @@ export function RetroCollision({ trigger, intensity = 1 }) {
       {/* Noise for crunch */}
       <NoiseGenerator output={noise} type="white" />
       <NoiseGenerator output={noise1} type="pink" />
-
       {/* Mix oscillator and noise (more noise for crunch) */}
       <Mixer inputs={[osc, noise, noise1]} output={mixed} levels={[0.6, 1.0, 1.0]} />
       {/* Filter for retro character (lowpass for thud) */}

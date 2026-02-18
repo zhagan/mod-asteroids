@@ -42,25 +42,25 @@ export function RetroThrust({ active, intensity }) {
   return (
     <>
       <LFO output={lfoSlow} frequency={0.8} waveform="triangle" />
-      <LFO output={lfoFast} frequency={8} waveform="sampleHold" direction="down" />
+      <LFO output={lfoFast} frequency={18} waveform="sampleHold" direction="down" />
       <ToneGenerator
         output={saw}
         waveform="sawtooth"
-        frequency={110 * Math.pow(2, intensity * 4)}
+        frequency={110 * Math.pow(2, intensity * 2)}
         cv={lfoFast}
-        cvAmount={50}
+        cvAmount={25}
       />
       <NoiseGenerator output={hiss} type="white" />
       <Mixer
         inputs={[saw, hiss]}
         output={mixed}
-        levels={[0.75, 0.25]}
+        levels={[0.4, 0.35]}
       />
       <Filter
         input={mixed}
         output={filtered}
-        type="lowpass"
-        cutoff={baseCutoff}
+        type="bandpass"
+        cutoff={350 * Math.pow(2, intensity * 4)}
         resonance={0.6}
         cutoffCv={lfoSlow}
         cutoffCvAmount={lfoCutoffAmt}

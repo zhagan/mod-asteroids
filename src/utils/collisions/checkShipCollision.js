@@ -53,6 +53,9 @@ function checkShipCollision(globalPlayer, setGlobalPlayer, setGameState, asteroi
         //check collision with UFO --This is my dirty VERY last min fix...not very DRY
         if (lineE < 31) {
             collisionDetected = true;
+            // Set bulletCollision for sound effect
+            setGlobalPlayer(old => ({ ...old, bulletCollision: true }));
+            setTimeout(() => setGlobalPlayer(old => ({ ...old, bulletCollision: false })), 100);
             //update state -1 live or gameover = 1
             setGameState(old => {
                 //check if gameover

@@ -8,7 +8,6 @@ import AudioEl from "../AudioEl/AudioEl";
 import GameOver from "../GameOver";
 import Touch from "../Touch";
 import { RetroCollisionRack } from '../RetroCollision';
-
 //utilities
 import Auth from "../../utils/auth";
 import motion from '../../utils/gameUtils/motion';
@@ -22,6 +21,7 @@ import asteroidGeneration from '../../utils/createObjects/asteroidGeneration';
 import generateBullet from '../../utils/createObjects/generateBullet';
 import { playSound, playSoundCancel } from '../../utils/playSound';
 import { checkScreenScale } from '../../utils/gameUtils/checkScreenScale';
+import {RetroUFORack} from "../RetroUFO";
 
 const GameWindow = ({ gameState, setGameState }) => {
   //------------------------------States---------------------------//
@@ -178,10 +178,11 @@ const GameWindow = ({ gameState, setGameState }) => {
           const pos = asteroids[posId];
           return pos.alive ? <Asteroid key={`asteroid-id-${posId}`} pos={pos} posId={posId} /> : '';
         })}
+        {/* --- Retro UFO Sound --- */}
+        <RetroUFORack trigger={isUfo.current} intensity={intensity} />
         {/* --- Retro Collision Sound: Player --- */}
-        <RetroCollisionRack trigger={!!globalPlayer.collision} intensity={intensity} />
         {/* --- Retro Collision Sound: Bullet --- */}
-        <RetroCollisionRack trigger={!!globalPlayer.bulletCollision} intensity={intensity} />
+        <RetroCollisionRack trigger={!!globalPlayer.bulletCollision || !!globalPlayer.collision } intensity={intensity} />
       </div>
       {/*-------TOUCH CONTROLS------*/}
       {(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && globalPlayer.alive) ?

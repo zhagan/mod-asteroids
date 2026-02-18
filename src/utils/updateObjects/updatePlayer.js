@@ -1,7 +1,7 @@
 import { playSound, stopSound } from "../playSound";
 
 function updatePlayer(globalPlayer, keysPressed, tpCache) {
-    let { x, y, xB, yB, dir, thrust, vx, vy, turnSpeed, spriteDim, alive, invnsTimer, pressW, pressSpace } = globalPlayer;
+    let { x, y, xB, yB, dir, thrust, vx, vy, turnSpeed, spriteDim, alive, invnsTimer, pressW, pressSpace, pressD, pressA } = globalPlayer;
     if (invnsTimer > 0) invnsTimer--;
 
     //if 'w' key opressed, add velocity in direction
@@ -17,10 +17,16 @@ function updatePlayer(globalPlayer, keysPressed, tpCache) {
     }
     //Rotate ship whe A or D pressed
     if (keysPressed.includes('d') || keysPressed.includes('arrowright')  || tpCache.current.includes('rightBtn')) {
+        pressD = true;
         (dir < 360) ? dir += turnSpeed : dir = 0;
+    } else {
+        pressD = false;
     }
     if (keysPressed.includes('a') || keysPressed.includes('arrowleft')  || tpCache.current.includes('leftBtn')) {
+        pressA = true;
         (dir <= 0) ? dir = 360 : dir -= turnSpeed;
+    } else {
+        pressA = false;
     }
     if (keysPressed.includes(' ')) {
         pressSpace = true;
@@ -39,7 +45,7 @@ function updatePlayer(globalPlayer, keysPressed, tpCache) {
     xB=x; if (xB+spriteDim.w>1920) xB -=1920;
     yB=y; if (yB+spriteDim.h>980) yB -=980;
 
-    return { ...globalPlayer, x, y, xB, yB, dir, thrust, vx, vy, turnSpeed, spriteDim, alive, invnsTimer, pressW, pressSpace }
+    return { ...globalPlayer, x, y, xB, yB, dir, thrust, vx, vy, turnSpeed, spriteDim, alive, invnsTimer, pressW, pressSpace, pressD, pressA }
 }
 
 export default updatePlayer;

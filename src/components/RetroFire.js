@@ -8,7 +8,7 @@ import {
     Filter,
     Mixer,
     Monitor,
-    ADSR, LFO,
+    ADSR, LFO, Flanger,
 } from '@mode-7/mod';
 
 // RetroFire: short, punchy, retro gunshot effect
@@ -21,6 +21,7 @@ export function RetroFire({ trigger, intensity = 1 }) {
   const env = useModStream();
   const lfo = useModStream();
   const lfoVca = useModStream();
+  const flanger = useModStream();
 
   const [gate, setGate] = useState(0);
   const adsrParams = useMemo(() => ({
@@ -55,7 +56,7 @@ export function RetroFire({ trigger, intensity = 1 }) {
       {/* Noise for "pop" */}
       <NoiseGenerator output={noise} type="white" />
       {/* Mix oscillator and noise */}
-      <Mixer inputs={[osc, noise]} output={mixed} levels={[0.7, 0.2]} />
+      <Mixer inputs={[osc, noise]} output={mixed} levels={[0.9, 0.4]} />
       {/* Filter for retro character */}
       <Filter
         input={mixed}
@@ -66,8 +67,9 @@ export function RetroFire({ trigger, intensity = 1 }) {
         cutoffCv={env}
         cutoffCvAmount={-1200}
       />
+      <Flanger input={filtered} output={flanger}/>
       {/* VCA for amplitude envelope */}
-      <VCA input={filtered} output={vca} cv={env} />
+      <VCA input={flanger} output={vca} cv={env} />
       <Monitor input={vca} />
     </>
   );

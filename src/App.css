@@ -1,38 +1,268 @@
-.App {
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+@import url("https://unpkg.com/nes.css@latest/css/nes.min.css");
+
+body{
+  -webkit-touch-callout: none;
+}
+#gameRulesContainer{
+  z-index: 100;
+  align-self: center;
+  position: fixed;
+  transform-origin: top left;
+  width: 1920px;
+  height: 1000px;
+  top: 0px;
+  left: 0px;
+  background-color: black;
+  border: white solid 3px;
   text-align: center;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+#hud-footer {
+  opacity: 40%;
+  position: relative;
+  top:800px;
+  left: 0px
+  ;
+}
+#hud-footer:hover {
+  opacity: 100%;
+  position: relative;
+  top:800px;
+  left: 0px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+html {
+background-color: black;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+body {
+  overflow: scroll;
+  background-color: rgba(0, 0, 0, 0);
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.logo {
+  font-size: 10vw;
+  margin-top: 25px;
+  text-align: center;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+
+
+#touch-component{
+  -webkit-touch-callout: none;
+  width: 100vw;
+  position:fixed;
+  z-index: 101;
+  top:70%;
+}
+.touchButton{
+  border: none;
+  outline: none;
+  background-color: transparent;
+  position:fixed;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  border-radius: 150px;
+  opacity: .5;
+  font-size: xx-large;
+  width: 15vw;
+  height: 30vh;
+  margin: 2vw;
+  min-height: 60px;
+}
+
+/* .touchButton:active {
+  opacity: 1;
+} */
+
+#leftBtn{
+  background-image: url(./img/left-button.png);
+  top: 60%;
+  
+  
   }
-  to {
-    transform: rotate(360deg);
+  #rightBtn{
+      background-image: url(./img/right-button.png);
+      top: 60%;
+      left: 20%;
+  }
+
+  #actionButtons{
+    position: relative;
+    min-width: 50px;
+   width: 40vw;
+   height: 40vh;
+   bottom: 20vh;
+   left: 55vw;
+   margin: 0px;
+  }
+  #thrustBtn{
+    position: relative;
+      background-image: url(./img/a-button.png);
+      top: 0%;
+      left: 0%;
+      
+  }
+  #shootBtn{
+    position: relative;
+      background-image: url(./img/b-button.png);
+      top: 5%;
+      left: 1vw;
+  }
+#quitLogoutMobile{
+  scale: 1;
+  width: 100%;
+  position: fixed;
+  top: 5px;
+  left: 47%;
+}
+.mobile-button{
+  font-size: 30px;
+  opacity: .5;
+  border-radius: 50px;;
+  height: 75px;
+  width: 300px;
+}
+
+#game-container {
+display: flex;
+align-content:center;
+}
+.side-border{
+  position: absolute;
+  height: 100vh;
+  background-color: rgb(0, 0, 0);
+  z-index: 100;
+}
+#game-window {
+  clip-path: inset(0px 0px 0px 0px);
+  background-image: url("./assets/space.gif");
+  background-repeat: repeat;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  
+  transform-origin: top left;
+  /* the width and height must be fixed! Use transform: scale() on the body to change size of all elements */
+  width: 1920px;
+  height: 980px;
+}
+
+#black-bar {
+  position: absolute;
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+}
+#start-display {
+  z-index: 1;
+  position: absolute;
+  font-size: 50px;
+  text-align: center;
+  top: 206px; 
+  left: 764px;
+  color: #ffff;
+  transform: scale(1.5) perspective(200px) rotateX(45deg);
+  animation: zoomIn .5s;  
+}
+#game-over {
+  z-index: 1;
+  position: absolute;
+  font-size: 100px;
+  text-align: center;
+  top: 206px;
+  left: 495px;
+  color: #ffff;
+  transform: scale(1) perspective(200px) rotateX(45deg);
+  animation: zoomIn 0.6s;
+}
+#ufo-object {
+  z-index: -1;
+  position: absolute;
+  top: 50px;
+  left: 1920px;
+}
+#player-object {
+  z-index: -1;
+  position: absolute;
+}
+#bonus-element {
+  opacity: 0%;
+  z-index: 0;
+  left: 350px;
+  top: 20px;
+  color: greenyellow;
+  position: absolute;
+  animation: fadeOutUp 2s;
+}
+#no-bonus-element {
+  opacity: 0%;
+  z-index: 0;
+  left: 650px;
+  top: 20px;
+  color: rgb(255, 0, 0);
+  position: absolute;
+  animation: fadeOutUp 2s;
+}
+.fire {
+  background-image: url("./assets/img/fire.gif");
+  background-repeat: no-repeat;
+  background-position: top;
+  background-size: cover;
+}
+
+#bullet-object {
+  z-index: -1;
+  position: absolute;
+}
+
+#asteroid-object {
+  z-index: -1;
+  position: absolute;
+}
+
+#asteroid-shadow {
+  z-index: -1;
+  position: absolute;
+}
+/* Button Component */
+.upperCase {
+  text-transform: uppercase;
+}
+
+.Mui-focused {
+  color: white !important;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0) perspective(10000px) rotateX(45deg);
+  }
+}
+
+@keyframes fadeOutUp {
+  from {
+    opacity: 100%;
+    top: 60px
+  }
+  
+}
+/* Media Queries */
+@media (max-width: 908px) {
+  body {
+    overflow: visible;
+  }
+  .logo h1 {
+    margin-top: 75px;
+  }
+}
+
+@media (max-width: 830px) {
+  .logo img {
+    width: 100%;
   }
 }

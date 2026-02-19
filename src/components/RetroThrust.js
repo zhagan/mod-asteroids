@@ -28,17 +28,13 @@ export function RetroThrust({ active, intensity }) {
   const [gate, setGate] = useState(0)
   // const [speed, setSpeed] = useState(0)
 
-  const baseCutoff = useMemo(() => 550 + 700 * intensity, [intensity])
   const lfoCutoffAmt = useMemo(() => 350 + 250 * intensity, [intensity])
   // const driveAmt = useMemo(() => 0.22 + 0.18 * intensity, [intensity])
   // const gainAmt = useMemo(() => 0.28 + 0.12 * intensity, [intensity])
   useEffect(() => {
     setGate(active ? 1 : 0)
   }, [active])
-  useEffect(() => {
-    // setSpeed(intensity)
-    console.log('intensity', intensity)
-  }, [intensity])
+  
   return (
     <>
       <LFO output={lfoSlow} frequency={0.8} waveform="triangle" />

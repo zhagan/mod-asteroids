@@ -48,7 +48,7 @@ const Touch = ({ tpCache, spaceDown }) => {
             window.removeEventListener("touchstart", handleTouchStart);
             window.removeEventListener("touchend", handleTouchEnd);
         };
-    }, []);
+    }, [spaceDown, tpCache]);
 
     return (
         <div id="touch-component">

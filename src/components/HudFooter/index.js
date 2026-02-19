@@ -1,12 +1,14 @@
 import * as React from "react";
-import { Box, Grid, Typography, } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import Auth from "../../utils/auth";
+import { useHistory } from "react-router-dom";
 
 export default function HudFooter({setGameState}) {
+    const history = useHistory();
 
     const handleQuit = () => {
         document.exitFullscreen();
-        window.location = "/start";
+        history.push("/start");
     }
 
     const handleRetry = () => {
@@ -26,7 +28,7 @@ export default function HudFooter({setGameState}) {
             loggedIn: isLoggedIn
           }));
          
-          window.location = "/main";
+          history.push("/main");
 
     }
 

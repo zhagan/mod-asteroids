@@ -38,7 +38,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Specify your Node.js version
+          node-version: '22' # Specify your Node.js version
 
       - name: Install React dependencies
         run: npm ci

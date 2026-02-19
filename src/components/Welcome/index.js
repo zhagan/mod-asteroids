@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Leaderboard from "../Leaderboard";
 import { CardActions } from "@mui/material";
 import { playMenuSound } from "../../utils/playSound";

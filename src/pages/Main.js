@@ -1,7 +1,5 @@
 import React from 'react';
 import GameWindow from '../components/GameWindow';
-import Auth from "../utils/auth";
-import { Redirect } from 'react-router-dom';
 
 const Main = ({
   gameState,

@@ -9,12 +9,7 @@ class AuthService {
 
   // check if token is expired
   isTokenExpired(token) {
-    try {
-      // Removed decode usage, just return false for demo
-      return false;
-    } catch (err) {
-      return false;
-    }
+    return false;
   }
 
   getToken() {
@@ -36,4 +31,5 @@ class AuthService {
   }
 }
 
-export default new AuthService();
+const authService = new AuthService();
+export default authService;

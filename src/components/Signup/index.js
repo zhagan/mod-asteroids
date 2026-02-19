@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import {
   TextField,
   Card,
@@ -8,10 +7,8 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
-import Auth from '../../utils/auth';
 import { playMenuSound } from '../../utils/playSound';
 const Signup = ({ show, setShow }) => {
-  const navigate = useHistory();
   const [formState, setFormState] = useState({
     email: '',
     password: '',

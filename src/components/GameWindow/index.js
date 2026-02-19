@@ -9,7 +9,6 @@ import GameOver from "../GameOver";
 import Touch from "../Touch";
 import { RetroCollisionRack } from '../RetroCollision';
 //utilities
-import Auth from "../../utils/auth";
 import motion from '../../utils/gameUtils/motion';
 import updateAsteroids from '../../utils/updateObjects/updateAsteroids';
 import updatePlayer from '../../utils/updateObjects/updatePlayer';
@@ -194,4 +193,3 @@ const GameWindow = ({ gameState, setGameState }) => {
   );
 };
 export default GameWindow;
-

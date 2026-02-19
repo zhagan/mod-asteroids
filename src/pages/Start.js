@@ -6,7 +6,6 @@ import { Box, Container, Grid, CardActions } from "@mui/material";
 import Auth from "../utils/auth";
 import { playMenuSound } from "../utils/playSound";
 import Logo from "../assets/img/logo.svg";
-import { toggleFullscreen } from "../utils/gameUtils/toggleFullscreen.js";
 import GameRules from "../components/GameRules";
 
 const Start = ({ gameState, setGameState }) => {
@@ -26,12 +25,11 @@ const Start = ({ gameState, setGameState }) => {
     }));
 
     playMenuSound("menu_select");
-  }, []);
+  }, [setGameState]);
 
   const navigate = useHistory();
 
   const handleStart = () => {
-    // toggleFullscreen();
     navigate.push("/main");
   };
   const handleLogout = () => {

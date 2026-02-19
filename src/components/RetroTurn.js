@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect } from 'react';
 import {
     AudioProvider,
     useModStream,
@@ -8,7 +8,7 @@ import {
     Filter,
     Mixer,
     Monitor,
-    ADSR, LFO,
+    LFO,
 } from '@mode-7/mod';
 
 // RetroCollision: short, impactful, retro collision sound

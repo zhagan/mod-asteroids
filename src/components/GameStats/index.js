@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Container, Typography } from "@mui/material";
 
 const GameOverStats = ({ gameState }) => {
   const currentScore = gameState.score;
 
-  const [isHighScore, setIsHighScore] = useState({
+  const isHighScore = {
     user: false,
     leaderboard: false,
-  });
+  };
 
 
   return (

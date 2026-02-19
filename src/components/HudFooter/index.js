@@ -1,11 +1,8 @@
 import * as React from "react";
 import { Box, Grid, Typography, } from "@mui/material";
 import Auth from "../../utils/auth";
-import { useHistory } from 'react-router-dom';
-import { toggleFullscreen } from "../../utils/gameUtils/toggleFullscreen";
 
 export default function HudFooter({setGameState}) {
-    const navigate = useHistory();
 
     const handleQuit = () => {
         document.exitFullscreen();

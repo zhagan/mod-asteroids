@@ -1,52 +1,54 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 const Touch = ({ tpCache, spaceDown }) => {
 
 
-    function toggleFullscreen() {
-        const elem = document.querySelector("body");
-        if (!document.fullscreenElement) {
-            elem.requestFullscreen().catch(err => {
-                alert(`Error attempting to enable fullscreen mode: ${err.message} (${err.name})`);
-            });
-        } else {
-            document.exitFullscreen();
-        }
-    }
-
-    function getTouch(event) {
-       
-        const e = event.touches;
-        tpCache.current = [];
-        for (let i = 0; i < event.touches.length; i++) {
-            tpCache.current.push(e[i].target.id)
-        }
-
-        //simulate space press
-        if (tpCache.current.includes("shootBtn") && spaceDown.current !== 2) spaceDown.current = 1;
-        if (!tpCache.current.includes("shootBtn")) spaceDown.current = 0;
-    }
-
     useEffect(() => {
-        window.addEventListener('touchstart', function (event) {
-            
-            getTouch(event)
-        }, false);
-
-        window.addEventListener('touchmove', function (event) {
-
-            //getTouch (event)
-        }, false);
-
-        window.addEventListener('touchend', function (event) {
-            
-            if (event.target.id === 'FullScreen') {
-                toggleFullscreen()
+        const toggleFullscreen = () => {
+            const elem = document.querySelector("body");
+            if (!document.fullscreenElement) {
+                elem.requestFullscreen().catch((err) => {
+                    alert(
+                        `Error attempting to enable fullscreen mode: ${err.message} (${err.name})`
+                    );
+                });
             } else {
-                getTouch(event)
+                document.exitFullscreen();
             }
-        }, false);
-    }, [])
+        };
+        const updateTouch = (event) => {
+            const touches = event.touches;
+            tpCache.current = [];
+            for (let i = 0; i < touches.length; i++) {
+                tpCache.current.push(touches[i].target.id);
+            }
+
+            if (tpCache.current.includes("shootBtn") && spaceDown.current !== 2) {
+                spaceDown.current = 1;
+            }
+            if (!tpCache.current.includes("shootBtn")) spaceDown.current = 0;
+        };
+
+        const handleTouchStart = (event) => {
+            updateTouch(event);
+        };
+
+        const handleTouchEnd = (event) => {
+            if (event.target.id === "FullScreen") {
+                toggleFullscreen();
+                return;
+            }
+            updateTouch(event);
+        };
+
+        window.addEventListener("touchstart", handleTouchStart, false);
+        window.addEventListener("touchend", handleTouchEnd, false);
+
+        return () => {
+            window.removeEventListener("touchstart", handleTouchStart);
+            window.removeEventListener("touchend", handleTouchEnd);
+        };
+    }, []);
 
     return (
         <div id="touch-component">

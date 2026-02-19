@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
     AudioProvider,
     useModStream,
-    NoiseGenerator,
     VCA,
-    Filter,
-    Mixer,
-    Monitor, Clock, Sequencer, ToneGenerator,
+    Monitor,
+    Clock,
+    Sequencer,
+    ToneGenerator,
 } from '@mode-7/mod';
 
 // RetroCollision: short, impactful, retro collision sound

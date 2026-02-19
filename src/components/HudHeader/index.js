@@ -1,7 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { AppBar, Toolbar, Typography, Grid } from "@mui/material";
-import { GET_ME } from "../../utils/queries";
-// import { useQuery } from "@apollo/client";
 
 export default function HudHeader({gameState, setGameState}) {
 

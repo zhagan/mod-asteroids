@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
-import Signup from "../components/Signup";
 // import Login from "../components/Login";
 import Welcome from "../components/Welcome";
 import Footer from "../components/Footer";

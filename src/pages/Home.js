@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Redirect } from "react-router-dom";
+// import { Redirect } from "react-router-dom";
 // import Login from "../components/Login";
 import Welcome from "../components/Welcome";
 import Footer from "../components/Footer";
@@ -30,10 +30,6 @@ const Home = ({gameState, setGameState}) => {
     }));
     toggleFullscreen();
     navigate.push("/main");
-  }
-
-  if (isLoggedIn) {
-    return <Redirect to="/start" />;
   }
 
   return (
@@ -76,7 +72,6 @@ const Home = ({gameState, setGameState}) => {
         <button
               type="button"
               className="nes-btn upperCase"
-            
               onClick={handleStartNoLogin}
             >
               Start

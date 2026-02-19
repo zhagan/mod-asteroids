@@ -1,14 +1,19 @@
 import React, { useEffect } from "react";
-import { useHistory, Redirect } from "react-router-dom";
+import { 
+  useHistory, 
+  // Redirect 
+} from "react-router-dom";
 import Leaderboard from "../components/Leaderboard";
 import Footer from "../components/Footer";
 import { Box, Container, Grid, CardActions } from "@mui/material";
-import Auth from "../utils/auth";
-import { playMenuSound } from "../utils/playSound";
+// import Auth from "../utils/auth";
+// import { playMenuSound } from "../utils/playSound";
 import Logo from "../assets/img/logo.svg";
 import GameRules from "../components/GameRules";
 
 const Start = ({ gameState, setGameState }) => {
+  const navigate = useHistory();
+
   useEffect(() => {
     setGameState((old) => ({
       ...old,
@@ -23,24 +28,15 @@ const Start = ({ gameState, setGameState }) => {
       gameOver: 0,
       loggedIn: 1
     }));
-
-    playMenuSound("menu_select");
+    // playMenuSound("menu_select");
   }, [setGameState]);
 
-  const navigate = useHistory();
+  // const navigate = useHistory();
 
   const handleStart = () => {
     navigate.push("/main");
   };
-  const handleLogout = () => {
-    Auth.logout();
-    navigate.push("/");
-    playMenuSound("menu_close");
-  };
 
-  if (!Auth.loggedIn()) {
-    return <Redirect to="/" />;
-  }
 
   return (
     <Box
@@ -81,13 +77,6 @@ const Start = ({ gameState, setGameState }) => {
 
             <GameRules/>
 
-            <button
-              type="button"
-              className="nes-btn upperCase"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
           </CardActions>
         </Container>
       </Container>

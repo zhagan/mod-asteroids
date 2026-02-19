@@ -27,7 +27,7 @@ function App() {
 
   return (
       <ThemeProvider theme={theme}>
-        <Router>
+        <Router basename={process.env.PUBLIC_URL || '/'}>
           <Switch>
             <Route exact path="/">
               <Home setGameState={setGameState} gameState={gameState}/>

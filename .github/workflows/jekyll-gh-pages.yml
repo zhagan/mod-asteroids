@@ -40,7 +40,7 @@ jobs:
         run: npm i --legacy-peer-deps
 
       - name: Set homepage for production
-        run: npm pkg set homepage="/mod-asteroids/"  
+        run: npm pkg set homepage="https://zackhagan.com/mod-asteroids/"  
         
       - name: Build React application
         run: npm run build

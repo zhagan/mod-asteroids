@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useHistory, Redirect } from "react-router-dom";
-import Profile from "../components/Profile";
 import Leaderboard from "../components/Leaderboard";
 import Footer from "../components/Footer";
 import { Box, Container, Grid, CardActions } from "@mui/material";
@@ -64,7 +63,6 @@ const Start = ({ gameState, setGameState }) => {
           direction="row"
           justifyContent="center"
         >
-          <Profile setGameState={setGameState} gameState={gameState} />
           <Leaderboard />
         </Grid>
         <Container maxWidth="xs">

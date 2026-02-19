@@ -31,17 +31,13 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
         
-      - name: Checkout source code
-        uses: actions/checkout@v4
-
-      # Setup Node.js for React
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22' # Specify your Node.js version
 
       - name: Install React dependencies
-        run: npm ci
+        run: npm i --legacy-peer-deps
         
       - name: Build React application
         run: npm run build

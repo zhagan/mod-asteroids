@@ -25,17 +25,18 @@ export function RetroMidi({
   const [soundFontUrl, setSoundFontUrl] = useState('');
   const midiUrl = useMemo(() => midiLink, [midiLink]);
   const baseAssetsUrl = useMemo(() => {
+    const publicUrl = (process.env.PUBLIC_URL || '').replace(/\/$/, '');
+    if (publicUrl) return publicUrl;
     if (typeof window === 'undefined') return '';
     return window.location.origin;
   }, []);
-  const wasmBaseUrl = useMemo(() => {
-    if (!baseAssetsUrl) return '/js-synthesizer/';
-    return `${baseAssetsUrl}/js-synthesizer/`;
-  }, [baseAssetsUrl]);
-  const desiredSoundFontUrl = useMemo(() => {
-    if (!baseAssetsUrl) return '/sf2/microgm.sf2';
-    return `${baseAssetsUrl}/sf2/microgm.sf2`;
-  }, [baseAssetsUrl]);
+  const joinAssetUrl = (relativePath) => {
+    const trimmedRelative = relativePath.replace(/^\/+/, '');
+    if (!baseAssetsUrl) return `/${trimmedRelative}`;
+    return `${baseAssetsUrl.replace(/\/$/, '')}/${trimmedRelative}`;
+  };
+  const wasmBaseUrl = useMemo(() => joinAssetUrl('/js-synthesizer/'), [baseAssetsUrl]);
+  const desiredSoundFontUrl = useMemo(() => joinAssetUrl('/sf2/microgm.sf2'), [baseAssetsUrl]);
 
   const metadataRef = useRef(null);
   const handleControlsReady = (controls) => {

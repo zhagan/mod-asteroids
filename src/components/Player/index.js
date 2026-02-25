@@ -4,7 +4,8 @@ import { ThrustRack } from '../RetroThrust';
 import { RetroFireRack } from '../RetroFire';
 import { RetroTurnRack } from "../RetroTurn";
 
-const Player = ({ globalPlayer, intensity }) => {
+const Player = ({ globalPlayer, intensity, soundToggles = {} }) => {
+  const { turn = true, thrust = true } = soundToggles;
   return (
     <>
       <img
@@ -39,12 +40,14 @@ const Player = ({ globalPlayer, intensity }) => {
         alt='player-sprite'
         src={require('../../assets/img/player_sprt.png')}
         style={motion(globalPlayer.xB, globalPlayer.yB, globalPlayer.dir)} />}
-      <RetroTurnRack trigger={!!globalPlayer.pressD || !!globalPlayer.pressA} intensity={intensity} />
+      {turn && (
+        <RetroTurnRack trigger={!!globalPlayer.pressD || !!globalPlayer.pressA} intensity={intensity} />
+      )}
 
       {/* --- Retro Thruster Sound --- */}
-      <ThrustRack active={!!globalPlayer.pressW} intensity={intensity} />
+      {thrust && <ThrustRack active={!!globalPlayer.pressW} intensity={intensity} />}
       {/* --- Retro Gun Fire Sound --- */}
-      <RetroFireRack trigger={!!globalPlayer.pressSpace} intensity={intensity} />
+      {/* <RetroFireRack trigger={!!globalPlayer.pressSpace} intensity={intensity} /> */}
     </>
   )
 }

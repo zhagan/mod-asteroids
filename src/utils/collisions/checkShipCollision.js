@@ -1,5 +1,4 @@
 import getDistance from '../gameUtils/getDistance'
-import { playSound } from '../playSound'
 
 function checkShipCollision(globalPlayer, setGlobalPlayer, setGameState, asteroids, ufo) {
     const { x, y, xB, yB, spriteDim, alive, invnsTimer } = globalPlayer;
@@ -30,13 +29,11 @@ function checkShipCollision(globalPlayer, setGlobalPlayer, setGameState, asteroi
                     setGameState(old => {
                         //check if gameover
                         if (old.lives <= 1) {
-                            playSound('gameover')
                             //kill player. set alive to false
                             setGlobalPlayer(old => ({ ...old, x: 906, y: 478, xB: 906, yB: 478, vx: 0, vy: 0, dir: 90, alive: false }));
                             //return uosated gameState
                             return ({ ...old, lives: 0, gameOver: 1 });
                         } else {
-                            playSound('player_die')
                             setGlobalPlayer(old => ({ ...old, x: 906, y: 478, xB: 906, yB: 478, vx: 0, vy: 0, dir: 90, invnsTimer: 175 }));
                             //return uosated gameState
                             return ({ ...old, lives: old.lives - 1 });
@@ -54,19 +51,17 @@ function checkShipCollision(globalPlayer, setGlobalPlayer, setGameState, asteroi
         if (lineE < 31) {
             collisionDetected = true;
             // Set bulletCollision for sound effect
-            setGlobalPlayer(old => ({ ...old, bulletCollision: true }));
-            setTimeout(() => setGlobalPlayer(old => ({ ...old, bulletCollision: false })), 100);
+            setGlobalPlayer(old => ({ ...old, bulletCollision: Number(old.bulletCollision) ? old.bulletCollision + 1 : 1 }));
+            // setTimeout(() => setGlobalPlayer(old => ({ ...old, bulletCollision: false })), 100);
             //update state -1 live or gameover = 1
             setGameState(old => {
                 //check if gameover
                 if (old.lives <= 1) {
-                    playSound('gameover')
                     //kill player. set alive to false
                     setGlobalPlayer(old => ({ ...old, x: 906, y: 478, xB: 906, yB: 478, vx: 0, vy: 0, dir: 90, alive: false }));
                     //return uosated gameState
                     return ({ ...old, lives: 0, gameOver: 1 });
                 } else {
-                    playSound('player_die')
                     setGlobalPlayer(old => ({ ...old, x: 906, y: 478, xB: 906, yB: 478, vx: 0, vy: 0, dir: 90, invnsTimer: 175 }));
                     //return uosated gameState
                     return ({ ...old, lives: old.lives - 1 });
@@ -76,8 +71,8 @@ function checkShipCollision(globalPlayer, setGlobalPlayer, setGameState, asteroi
             return false;
         }
         if (collisionDetected) {
-            setGlobalPlayer(old => ({ ...old, collision: true }));
-            setTimeout(() => setGlobalPlayer(old => ({ ...old, collision: false })), 100);
+            setGlobalPlayer(old => ({ ...old, collision: Number(old.collision) ? old.collision + 1 : 1 }));
+            // setTimeout(() => setGlobalPlayer(old => ({ ...old, collision: false })), 100);
         }
     }
 

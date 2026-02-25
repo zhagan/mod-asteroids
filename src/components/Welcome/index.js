@@ -1,7 +1,6 @@
 import React from "react";
 import Leaderboard from "../Leaderboard";
 import { CardActions } from "@mui/material";
-import { playMenuSound } from "../../utils/playSound";
 
 const Welcome = ({ show, setShow }) => {
 
@@ -20,7 +19,6 @@ const Welcome = ({ show, setShow }) => {
         <button
           type="button"
           onClick={() => {
-            playMenuSound('menu_select');
             setShow("Login")
           }}
           className={`${show === "Login"} nes-btn upperCase`}
@@ -30,7 +28,6 @@ const Welcome = ({ show, setShow }) => {
         <button
           type="button"
           onClick={() => {
-            playMenuSound('menu_select');
             setShow("Signup");
           }}
 

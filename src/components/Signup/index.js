@@ -7,7 +7,6 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
-import { playMenuSound } from '../../utils/playSound';
 const Signup = ({ show, setShow }) => {
   const [formState, setFormState] = useState({
     email: '',
@@ -128,7 +127,6 @@ const Signup = ({ show, setShow }) => {
             <button
               type="button"
               onClick={() => {
-                playMenuSound('menu_close');
                 setShow('Welcome');
               }}
               className={`${show === 'Welcome'} nes-btn upperCase`}

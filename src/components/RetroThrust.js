@@ -41,8 +41,8 @@ export function RetroThrust({ active, intensity }) {
       <LFO output={lfoFast} frequency={18} waveform="sampleHold" direction="down" />
       <ToneGenerator
         output={saw}
-        waveform="sawtooth"
-        frequency={110 * Math.pow(2, intensity * 2)}
+        waveform="triangle"
+        frequency={110 * Math.pow(2, intensity * 5)}
         cv={lfoFast}
         cvAmount={25}
       />

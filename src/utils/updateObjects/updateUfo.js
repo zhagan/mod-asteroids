@@ -1,5 +1,4 @@
 import getDistatce from "../gameUtils/getDistance";
-import { playSoundCancel, stopSound } from '../playSound';
 function updateUfo(ufo, player) {
     let newBullet = {};
     const bullet = ufo.bullet;
@@ -27,7 +26,6 @@ function updateUfo(ufo, player) {
         const dx = player.x - ufoX;
         const dy = player.y - ufoY;
         const ang = Math.atan2(dy, dx) * 180 / Math.PI;
-        if (ufoX > 50) playSoundCancel('bullet_snd');
         newBullet = {
             dir: ang,
             x: ufoX + 50,
@@ -40,7 +38,6 @@ function updateUfo(ufo, player) {
     if (getDistatce(bullet.x, player.x + 27, bullet.y, player.y + 32) < 31) newBullet = {};
     if (ufoX < 50 || ufoX >= 1920) newBullet = { ...bullet, x: -1000 };
     if (ufoX > 1920) {
-        stopSound('ufo_snd');
         newX = -200;
     }
 

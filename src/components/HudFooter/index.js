@@ -1,36 +1,28 @@
 import * as React from "react";
 import { Box, Grid, Typography } from "@mui/material";
 import Auth from "../../utils/auth";
-import { useHistory } from "react-router-dom";
+import { baseGameState } from "../../utils/gameStateDefaults";
 
-export default function HudFooter({setGameState}) {
-    const history = useHistory();
+export default function HudFooter({ setGameState, setGlobalPlayer }) {
 
     const handleQuit = () => {
-        document.exitFullscreen();
-        history.push("/start");
-    }
+        setGameState(old => ({
+            ...old,
+            lives: 0,
+            gameOver: 1,
+        }));
+        setGlobalPlayer(old => ({ ...old, alive: false }));
+    };
 
     const handleRetry = () => {
         const isLoggedIn = (Auth.loggedIn()) ? 1 : 0;
-        //retry
         setGameState((old) => ({
-            ...old,
-            curLevel: 0,
-            score: 0,
-            exp: 0,
-            lives: 3,
-            playerLevel: 0,
-            numberOfAsteroids: 0,
-            timer: 0,
-            paused: 0,
-            gameOver: 0,
-            loggedIn: isLoggedIn
-          }));
-         
-          history.push("/main");
-
-    }
+            ...baseGameState,
+            username: old.username,
+            loggedIn: isLoggedIn,
+            restartId: old.restartId + 1,
+        }));
+    };
 
     return (
         <div id='hud-footer'>

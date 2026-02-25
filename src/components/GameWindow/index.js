@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-
 //components
 import Hud from '../Hud';
 import Player from '../Player';
 import Asteroid from '../Asteroid';
-import AudioEl from "../AudioEl/AudioEl";
 import GameOver from "../GameOver";
 import Touch from "../Touch";
 import { RetroCollisionRack } from '../RetroCollision';
@@ -18,9 +16,36 @@ import checkShipCollision from '../../utils/collisions/checkShipCollision';
 import checkBulletCollision from '../../utils/collisions/checkBulletCollision';
 import asteroidGeneration from '../../utils/createObjects/asteroidGeneration';
 import generateBullet from '../../utils/createObjects/generateBullet';
-import { playSound, playSoundCancel } from '../../utils/playSound';
 import { checkScreenScale } from '../../utils/gameUtils/checkScreenScale';
 import {RetroUFORack} from "../RetroUFO";
+import { RetroFireRack } from "../RetroFire";
+import { RetroMidiRack } from "../RetroMidi";
+
+const SOUND_TOGGLE_ITEMS = [
+  { key: 'midi', label: 'Retro MIDI' },
+  { key: 'fire', label: 'Retro Fire' },
+  { key: 'turn', label: 'Retro Turn' },
+  { key: 'thrust', label: 'Retro Thrust' },
+  { key: 'ufo', label: 'Retro UFO' },
+];
+const formatDuration = (seconds) => {
+  if (typeof seconds !== 'number' || Number.isNaN(seconds)) return '--';
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.round(seconds % 60);
+  return `${mins}:${String(secs).padStart(2, '0')}`;
+};
+const getMetaName = (metadata, url, headerName) => {
+  if (!metadata) return 'Loading...';
+  const name = metadata.name?.trim();
+  if (name) return name;
+  if (headerName?.trim()) return headerName.trim();
+  if (url) {
+    const parts = url.split('/');
+    const last = parts[parts.length - 1];
+    return last || 'Unknown';
+  }
+  return 'Unknown';
+};
 
 const GameWindow = ({ gameState, setGameState }) => {
   //------------------------------States---------------------------//
@@ -33,6 +58,21 @@ const GameWindow = ({ gameState, setGameState }) => {
   });
   const [asteroids, setAsteroids] = useState({});
   const [bullets, setBullets] = useState([]);
+  const [playBullet, setPlayBullet] = useState(0)
+  const [gameStarted, setGameStarted] = useState(false);
+  const [soundToggles, setSoundToggles] = useState({
+    midi: true,
+    fire: true,
+    turn: true,
+    thrust: true,
+    ufo: true,
+  });
+  const [midiMetadata, setMidiMetadata] = useState(null);
+  const [midiLink, setMidiLink] = useState('');
+  const [headerTitle, setHeaderTitle] = useState(null);
+  const toggleSound = (key) => {
+    setSoundToggles((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
   //----------------------------Variables-------------------------//
   const keysPressed = useRef([]);
   const tpCache = useRef([]);
@@ -55,7 +95,7 @@ const GameWindow = ({ gameState, setGameState }) => {
 
         setGlobalPlayer((oldPlayer) => updatePlayer(oldPlayer, keysPressed.current, tpCache));
         checkScreenScale(screenWidth, setScreenScale);
-        console.log(gameState.loggedIn)
+        // console.log(gameState.loggedIn)
         loop();
       }, gameSpeed);
     });
@@ -75,7 +115,8 @@ const GameWindow = ({ gameState, setGameState }) => {
     //Make bullets--
     if (globalPlayer.alive && spaceDown.current === 1 && bullets.length <= 5) {
       spaceDown.current = 2;
-      playSoundCancel('bullet_snd');
+      // playSoundCancel('bullet_snd');
+      setPlayBullet(prev => prev + 1)
       setBullets((old) => ([...old, generateBullet(globalPlayer)]));
       setTimeout(() => (spaceDown.current === 2) ? spaceDown.current = 1 : false, 200)
     }
@@ -111,12 +152,11 @@ const GameWindow = ({ gameState, setGameState }) => {
 
   //------------------USE EFFECT ON MOUNT------------------//
   useEffect(() => {
+    if (!gameStarted) return;
 
-    playSound("start_snd");
     // Start Game Timer
     timer.current = setInterval(() => {
       if (!isUfo.current && Math.random() < .02) {
-        playSoundCancel('ufo_snd');
         isUfo.current = 1;
       };
       setGameState((old) => ({ ...old, timer: old.timer + 1 }));
@@ -125,8 +165,13 @@ const GameWindow = ({ gameState, setGameState }) => {
     document.addEventListener("keydown", logKeyDown);
 
     loop();//Start game loop
+    return () => {
+      clearInterval(timer.current);
+      document.removeEventListener("keyup", logKeyUp);
+      document.removeEventListener("keydown", logKeyDown);
+    };
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [gameStarted]);
 
   // Stop Timer when Player Dies
   useEffect(() => {
@@ -150,19 +195,72 @@ const GameWindow = ({ gameState, setGameState }) => {
         className="App"
         style={{ transform: `scale(${screenScale})`, left: `${borderWidth}px` }}> {/*"left" keeps the window centered based on the screen scale */}
         {/* --------GameWindowBegins------- */}
+        {!gameStarted && (
+          <div id="start-overlay">
+            <button
+              type="button"
+              className="nes-btn is-primary"
+              onClick={() => setGameStarted(true)}
+            >
+              Start Game
+            </button>
+          </div>
+        )}
         {(gameState.lives === 3 && globalPlayer.invnsTimer) ? (<div id='start-display'>{(gameState.curLevel === 1) ? "!START!" : ''}</div>) : ('')}
         {(globalPlayer.invnsTimer && gameState.curLevel !== 1 && bonus.current) ? (<div id='bonus-element'>Bonus:{bonus.current}</div>) : ('')}
         {(globalPlayer.invnsTimer && gameState.curLevel !== 1 && bonus.current !== 10000 && bonus.current) ? (<div id='no-bonus-element'>No Time Bonus</div>) : ('')}
-        {/*------------ AUDIO -------------*/}
-        <AudioEl />
         {/*------------- HUD  -------------*/}
-        <Hud gameState={gameState} setGameState={setGameState} />
+        <Hud gameState={gameState} setGameState={setGameState} setGlobalPlayer={setGlobalPlayer} />
+        <div id="sound-toggle-panel" className="nes-container is-rounded">
+          <div className="panel-title">Sound FX</div>
+          <div className="sound-toggle-list">
+            {SOUND_TOGGLE_ITEMS.map((item) => (
+              <label className="sound-toggle-row" key={item.key}>
+                <input
+                  type="checkbox"
+                  checked={soundToggles[item.key]}
+                  onChange={() => toggleSound(item.key)}
+                />
+                <span>{item.label}</span>
+              </label>
+            ))}
+          </div>
+          <div className="midi-metadata">
+            <div className="midi-meta-title">MIDI</div>
+            <div className="midi-meta-row">
+              <span>Name</span>
+              <span>{getMetaName(midiMetadata, midiLink, headerTitle)}</span>
+            </div>
+            <div className="midi-meta-row">
+              <span>Tracks</span>
+              <span>{midiMetadata?.tracks ?? '--'}</span>
+            </div>
+            <div className="midi-meta-row">
+              <span>Duration</span>
+              <span>{formatDuration(midiMetadata?.duration)}</span>
+            </div>
+            <div className="midi-meta-row">
+              <span>Tempo</span>
+              <span>{midiMetadata?.tempo ? `${midiMetadata.tempo} bpm` : '--'}</span>
+            </div>
+            <div className="midi-meta-row midi-meta-link">
+              <span>Link</span>
+              {midiLink ? (
+                <a href={midiLink} target="_blank" rel="noreferrer">
+                  {midiLink}
+                </a>
+              ) : (
+                <span>Loading...</span>
+              )}
+            </div>
+          </div>
+        </div>
         {/* UFO */}
         <img id="ufo-object" alt="ufo" style={{ 'left': ufo.x }} src={require(`../../assets/img/${ufoSprite}.png`)}></img>
         <img id='bullet-object' alt="bullet" src={require("../../assets/img/bullet.png")} style={motion(ufo.bullet.x, ufo.bullet.y, ufo.bullet.dir)} />
         {/*--------- RENDER PLAYER / GAME OVER ---------*/}
         {globalPlayer.alive ? (
-          <Player globalPlayer={globalPlayer} intensity={intensity}/>
+          <Player globalPlayer={globalPlayer} intensity={intensity} soundToggles={soundToggles} />
         ) : (
           <GameOver gameState={gameState} />
         )}
@@ -177,11 +275,20 @@ const GameWindow = ({ gameState, setGameState }) => {
           const pos = asteroids[posId];
           return pos.alive ? <Asteroid key={`asteroid-id-${posId}`} pos={pos} posId={posId} /> : '';
         })}
+        <RetroMidiRack
+          trigger={!!gameStarted}
+          enabled={soundToggles.midi}
+          onMetadataChange={setMidiMetadata}
+          onMidiUrlChange={setMidiLink}
+          onHeaderTitleChange={setHeaderTitle}
+        />
+        
+        {soundToggles.fire && <RetroFireRack trigger={playBullet} intensity={intensity} />}
         {/* --- Retro UFO Sound --- */}
-        <RetroUFORack trigger={isUfo.current} intensity={intensity} />
+        {soundToggles.ufo && <RetroUFORack trigger={isUfo.current} intensity={intensity} />}
         {/* --- Retro Collision Sound: Player --- */}
-        {/* --- Retro Collision Sound: Bullet --- */}
-        <RetroCollisionRack trigger={!!globalPlayer.bulletCollision || !!globalPlayer.collision } intensity={intensity} />
+        <RetroCollisionRack trigger={globalPlayer.bulletCollision} intensity={intensity} />
+        <RetroCollisionRack trigger={globalPlayer.collision} intensity={intensity} />
       </div>
       {/*-------TOUCH CONTROLS------*/}
       {(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && globalPlayer.alive) ?

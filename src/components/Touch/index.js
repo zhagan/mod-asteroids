@@ -13,7 +13,7 @@ const Touch = ({ tpCache, spaceDown }) => {
                     );
                 });
             } else {
-                document.exitFullscreen();
+                // document.exitFullscreen();
             }
         };
         const updateTouch = (event) => {

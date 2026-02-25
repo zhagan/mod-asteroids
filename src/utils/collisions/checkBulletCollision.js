@@ -1,6 +1,5 @@
 import getDistance from '../gameUtils/getDistance'
 import destoryAsteroid from '../createObjects/destoryAsteroid';
-import { stopSound } from '../playSound';
 
 
 function checkBulletCollision(bullets, setBullets, setAsteroids, asteroids, globalPlayer, setGameState, ufo, setUfo, setGlobalPlayer) {
@@ -15,7 +14,6 @@ function checkBulletCollision(bullets, setBullets, setAsteroids, asteroids, glob
                 const lineC = (ufoX > 0 && ufoY < 1920) ? getDistance(b.x, ufoX, b.y, ufoY) : 200;
                 if (lineC < 30) {
                     const results = bullets.filter((bullet, index) => index !== i);
-                    stopSound('ufo_snd')
                     setBullets(results);
                     setUfo(old => ({ ...old, x: 2000 }))
                     setGameState(old => ({ ...old, score: (old.score + (3000)) }));
@@ -48,8 +46,7 @@ function checkBulletCollision(bullets, setBullets, setAsteroids, asteroids, glob
                         destoryAsteroid(id, globalPlayer, asteroids, setAsteroids);
                         setGameState(old => ({ ...old, score: (old.score + (bonus)) }));
                         if (typeof setGlobalPlayer === 'function') {
-                            setGlobalPlayer(old => ({ ...old, bulletCollision: true }));
-                            setTimeout(() => setGlobalPlayer(old => ({ ...old, bulletCollision: false })), 100);
+                            setGlobalPlayer(old => ({ ...old, bulletCollision: Number(old.bulletCollision) ? old.bulletCollision + 1 : 1}));
                         }
                         return false;
                     };

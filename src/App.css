@@ -151,6 +151,18 @@ align-content:center;
   height: 980px;
 }
 
+#start-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 15;
+  gap: 1rem;
+  text-align: center;
+}
+
 #black-bar {
   position: absolute;
   z-index: 100;
@@ -185,6 +197,79 @@ align-content:center;
   position: absolute;
   top: 50px;
   left: 1920px;
+}
+
+#sound-toggle-panel {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  z-index: 30;
+  padding: 0.75rem;
+  border: 1px solid #fff;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+#sound-toggle-panel .panel-title {
+  font-size: 0.75rem;
+  font-family: 'Press Start 2P', sans-serif;
+  letter-spacing: 2px;
+  margin-bottom: 0.25rem;
+}
+
+#sound-toggle-panel .nes-btn {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  min-width: 150px;
+}
+
+#sound-toggle-panel .sound-toggle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+#sound-toggle-panel .sound-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+}
+
+#sound-toggle-panel .sound-toggle-row input {
+  width: 1rem;
+  height: 1rem;
+}
+
+#sound-toggle-panel .midi-metadata {
+  margin-top: 0.4rem;
+  padding-top: 0.35rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.3);
+  font-size: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+#sound-toggle-panel .midi-meta-title {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+#sound-toggle-panel .midi-meta-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+#sound-toggle-panel .midi-meta-link a {
+  color: #8cff9f;
+  font-size: 0.6rem;
+  text-decoration: underline;
 }
 #player-object {
   z-index: -1;

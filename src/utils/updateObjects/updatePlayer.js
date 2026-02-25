@@ -1,5 +1,3 @@
-import { playSound, stopSound } from "../playSound";
-
 function updatePlayer(globalPlayer, keysPressed, tpCache) {
     let { x, y, xB, yB, dir, thrust, vx, vy, turnSpeed, spriteDim, alive, invnsTimer, pressW, pressSpace, pressD, pressA } = globalPlayer;
     if (invnsTimer > 0) invnsTimer--;
@@ -8,11 +6,9 @@ function updatePlayer(globalPlayer, keysPressed, tpCache) {
 
     if (keysPressed.includes('w') || keysPressed.includes('arrowup')  || tpCache.current.includes('thrustBtn')) {
         pressW = true;
-        if (globalPlayer.alive) playSound('engine_snd')
         vx -= thrust * Math.cos((dir) * Math.PI / 180);
         vy -= thrust * Math.sin((dir) * Math.PI / 180);
     } else {
-        stopSound('engine_snd');
         pressW = false;
     }
     //Rotate ship whe A or D pressed

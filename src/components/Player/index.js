@@ -3,7 +3,7 @@ import motion from '../../utils/gameUtils/motion';
 import { ThrustRack } from '../RetroThrust';
 import { RetroTurnRack } from "../RetroTurn";
 
-const Player = ({ globalPlayer, intensity }) => {
+const Player = ({ globalPlayer, intensity, turnVolume = 1, thrustVolume = 1 }) => {
   return (
     <>
       <img
@@ -38,8 +38,12 @@ const Player = ({ globalPlayer, intensity }) => {
         alt='player-sprite'
         src={require('../../assets/img/player_sprt.png')}
         style={motion(globalPlayer.xB, globalPlayer.yB, globalPlayer.dir)} />}
-      <RetroTurnRack trigger={!!globalPlayer.pressD || !!globalPlayer.pressA} intensity={intensity} />
-      <ThrustRack active={!!globalPlayer.pressW} intensity={intensity} />
+      <RetroTurnRack
+        trigger={!!globalPlayer.pressD || !!globalPlayer.pressA}
+        intensity={intensity}
+        volume={turnVolume}
+      />
+      <ThrustRack active={!!globalPlayer.pressW} intensity={intensity} volume={thrustVolume} />
     </>
   )
 }

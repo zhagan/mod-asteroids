@@ -13,10 +13,24 @@ function App() {
     loggedIn: isLoggedIn,
     restartId: 0,
   }));
+  const [soundVolumes, setSoundVolumes] = useState({
+    midi: 1,
+    fire: 1,
+    turn: 1,
+    thrust: 1,
+    ufo: 1,
+    collision: 1,
+  });
 
   return (
     <ThemeProvider theme={theme}>
-      <Main key={gameState.restartId} setGameState={setGameState} gameState={gameState} />
+      <Main
+        key={gameState.restartId}
+        setGameState={setGameState}
+        gameState={gameState}
+        soundVolumes={soundVolumes}
+        setSoundVolumes={setSoundVolumes}
+      />
     </ThemeProvider>
   );
 }

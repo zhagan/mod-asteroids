@@ -12,7 +12,7 @@ import {
     Monitor,
 } from '@mode-7/mod'
 
-export function RetroThrust({ active, intensity }) {
+export function RetroThrust({ active, intensity, volume = 1 }) {
   const lfoSlow = useModStream()
   const lfoFast = useModStream()
   // const lfoFastDn = useModStream()
@@ -63,7 +63,7 @@ export function RetroThrust({ active, intensity }) {
       />
       {/*<Drive input={filtered} output={driven} amount={driveAmt} />*/}
       {/*<VCA input={filtered} output={vca} cv={lfoFastDn} />*/}
-      <VCA input={filtered} output={vca} gain={gate} />
+      <VCA input={filtered} output={vca} gain={gate * volume} />
       <Monitor input={vca} />
     </>
   )

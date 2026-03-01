@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   AudioProvider,
   useModStream,
   Monitor,
   MidiPlayer,
   Fluidsynth,
+  VCA,
 } from '@mode-7/mod';
 import { Midi } from '@tonejs/midi';
 
@@ -13,12 +14,15 @@ export function RetroMidi({
   trigger,
   intensity = 1,
   enabled = true,
+  volume = 1,
+  stopSignal = 0,
   onMetadataChange,
   onMidiUrlChange,
   onHeaderTitleChange,
 }) {
   const midi = useModStream();
   const fluidsynth = useModStream();
+  const vcaOut = useModStream();
   const controlsRef = useRef();
   const initialRandomMidi = `/uploads/${Math.floor(Math.random() * 1000)}.mid`;
   const [midiLink] = useState(`https://bitmidi.com${initialRandomMidi}`);
@@ -72,6 +76,22 @@ export function RetroMidi({
     controlsRef.current.setMidiUrl(midiUrl);
     controlsRef.current.play();
   }, [trigger, midiUrl]);
+
+  useEffect(() => {
+    if (!controlsRef.current) return;
+    if (enabled && !stopSignal) return;
+    if (typeof controlsRef.current.stop === 'function') {
+      controlsRef.current.stop();
+      return;
+    }
+    if (typeof controlsRef.current.pause === 'function') {
+      controlsRef.current.pause();
+      return;
+    }
+    if (typeof controlsRef.current.setPlaying === 'function') {
+      controlsRef.current.setPlaying(false);
+    }
+  }, [enabled, stopSignal]);
 
   useEffect(() => {
     onMidiUrlChange?.(midiLink);
@@ -144,15 +164,16 @@ export function RetroMidi({
         wasmBaseUrl={wasmBaseUrl}
         keepSoundFontinSketch={false}
       />
-      <Monitor input={fluidsynth} />
+      <VCA input={fluidsynth} output={vcaOut} gain={volume} />
+      <Monitor input={vcaOut} />
     </>
   );
 }
 
-export function RetroMidiRack(props) {
+export const RetroMidiRack = memo(function RetroMidiRack(props) {
   return (
     <AudioProvider>
       <RetroMidi {...props} />
     </AudioProvider>
   );
-}
+});

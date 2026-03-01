@@ -21,12 +21,13 @@ import {RetroUFORack} from "../RetroUFO";
 import { RetroFireRack } from "../RetroFire";
 import { RetroMidiRack } from "../RetroMidi";
 
-const SOUND_TOGGLE_ITEMS = [
+const SOUND_VOLUME_ITEMS = [
   { key: 'midi', label: 'Retro MIDI' },
   { key: 'fire', label: 'Retro Fire' },
   { key: 'turn', label: 'Retro Turn' },
   { key: 'thrust', label: 'Retro Thrust' },
   { key: 'ufo', label: 'Retro UFO' },
+  { key: 'collision', label: 'Retro Collision' },
 ];
 const formatDuration = (seconds) => {
   if (typeof seconds !== 'number' || Number.isNaN(seconds)) return '--';
@@ -47,7 +48,7 @@ const getMetaName = (metadata, url, headerName) => {
   return 'Unknown';
 };
 
-const GameWindow = ({ gameState, setGameState }) => {
+const GameWindow = ({ gameState, setGameState, soundVolumes, setSoundVolumes }) => {
   //------------------------------States---------------------------//
   const gameSpeed = 16.667;//16.667ms per frame = ~ 60fps
   const [ufo, setUfo] = useState({ x: -200, y: 50, bullet: { x: -1000, y: -1000 } });
@@ -60,18 +61,12 @@ const GameWindow = ({ gameState, setGameState }) => {
   const [bullets, setBullets] = useState([]);
   const [playBullet, setPlayBullet] = useState(0)
   const [gameStarted, setGameStarted] = useState(false);
-  const [soundToggles, setSoundToggles] = useState({
-    midi: true,
-    fire: true,
-    turn: true,
-    thrust: true,
-    ufo: true,
-  });
   const [midiMetadata, setMidiMetadata] = useState(null);
   const [midiLink, setMidiLink] = useState('');
   const [headerTitle, setHeaderTitle] = useState(null);
-  const toggleSound = (key) => {
-    setSoundToggles((prev) => ({ ...prev, [key]: !prev[key] }));
+  const [midiStopSignal, setMidiStopSignal] = useState(0);
+  const setSoundVolume = (key, value) => {
+    setSoundVolumes((prev) => ({ ...prev, [key]: value }));
   };
   //----------------------------Variables-------------------------//
   const keysPressed = useRef([]);
@@ -187,6 +182,15 @@ const GameWindow = ({ gameState, setGameState }) => {
   const playerSpeed = Math.sqrt(globalPlayer.vx ** 2 + globalPlayer.vy ** 2);
   const maxSpeed = 10; // Adjust this value to match your game's max speed
   const intensity = Math.min(playerSpeed / maxSpeed, 1);
+  const handleQuit = () => {
+    setGameState((old) => ({
+      ...old,
+      lives: 0,
+      gameOver: 1,
+    }));
+    setGlobalPlayer((old) => ({ ...old, alive: false }));
+    setMidiStopSignal((prev) => prev + 1);
+  };
   //-----------------------JSX-------------------------//
   return (
     <div id="game-container">
@@ -210,18 +214,39 @@ const GameWindow = ({ gameState, setGameState }) => {
         {(globalPlayer.invnsTimer && gameState.curLevel !== 1 && bonus.current) ? (<div id='bonus-element'>Bonus:{bonus.current}</div>) : ('')}
         {(globalPlayer.invnsTimer && gameState.curLevel !== 1 && bonus.current !== 10000 && bonus.current) ? (<div id='no-bonus-element'>No Time Bonus</div>) : ('')}
         {/*------------- HUD  -------------*/}
-        <Hud gameState={gameState} setGameState={setGameState} setGlobalPlayer={setGlobalPlayer} />
+        <Hud
+          gameState={gameState}
+          setGameState={setGameState}
+          setGlobalPlayer={setGlobalPlayer}
+          onQuit={handleQuit}
+        />
         <div id="sound-toggle-panel" className="nes-container is-rounded">
           <div className="panel-title">Sound FX</div>
           <div className="sound-toggle-list">
-            {SOUND_TOGGLE_ITEMS.map((item) => (
+            {SOUND_VOLUME_ITEMS.map((item) => (
               <label className="sound-toggle-row" key={item.key}>
-                <input
-                  type="checkbox"
-                  checked={soundToggles[item.key]}
-                  onChange={() => toggleSound(item.key)}
-                />
                 <span>{item.label}</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={soundVolumes[item.key]}
+                  onChange={(event) =>
+                    setSoundVolume(item.key, Number(event.target.value))
+                  }
+                  onKeyDown={(event) => {
+                    if (
+                      event.key === 'ArrowLeft' ||
+                      event.key === 'ArrowRight' ||
+                      event.key === 'ArrowUp' ||
+                      event.key === 'ArrowDown'
+                    ) {
+                      event.preventDefault();
+                    }
+                  }}
+                />
+                <span>{Math.round(soundVolumes[item.key] * 100)}%</span>
               </label>
             ))}
           </div>
@@ -244,10 +269,9 @@ const GameWindow = ({ gameState, setGameState }) => {
               <span>{midiMetadata?.tempo ? `${midiMetadata.tempo} bpm` : '--'}</span>
             </div>
             <div className="midi-meta-row midi-meta-link">
-              <span>Link</span>
               {midiLink ? (
                 <a href={midiLink} target="_blank" rel="noreferrer">
-                  {midiLink}
+                  Link
                 </a>
               ) : (
                 <span>Loading...</span>
@@ -260,7 +284,12 @@ const GameWindow = ({ gameState, setGameState }) => {
         <img id='bullet-object' alt="bullet" src={require("../../assets/img/bullet.png")} style={motion(ufo.bullet.x, ufo.bullet.y, ufo.bullet.dir)} />
         {/*--------- RENDER PLAYER / GAME OVER ---------*/}
         {globalPlayer.alive ? (
-          <Player globalPlayer={globalPlayer} intensity={intensity} soundToggles={soundToggles} />
+          <Player
+            globalPlayer={globalPlayer}
+            intensity={intensity}
+            turnVolume={soundVolumes.turn}
+            thrustVolume={soundVolumes.thrust}
+          />
         ) : (
           <GameOver gameState={gameState} />
         )}
@@ -277,18 +306,28 @@ const GameWindow = ({ gameState, setGameState }) => {
         })}
         <RetroMidiRack
           trigger={!!gameStarted}
-          enabled={soundToggles.midi}
+          volume={soundVolumes.midi}
+          enabled={soundVolumes.midi > 0}
+          stopSignal={midiStopSignal}
           onMetadataChange={setMidiMetadata}
           onMidiUrlChange={setMidiLink}
           onHeaderTitleChange={setHeaderTitle}
         />
-        
-        {soundToggles.fire && <RetroFireRack trigger={playBullet} intensity={intensity} />}
+
+        <RetroFireRack trigger={playBullet} intensity={intensity} volume={soundVolumes.fire} />
         {/* --- Retro UFO Sound --- */}
-        {soundToggles.ufo && <RetroUFORack trigger={isUfo.current} intensity={intensity} />}
+        <RetroUFORack trigger={isUfo.current} intensity={intensity} volume={soundVolumes.ufo} />
         {/* --- Retro Collision Sound: Player --- */}
-        <RetroCollisionRack trigger={globalPlayer.bulletCollision} intensity={intensity} />
-        <RetroCollisionRack trigger={globalPlayer.collision} intensity={intensity} />
+        <RetroCollisionRack
+          trigger={globalPlayer.bulletCollision}
+          intensity={intensity}
+          volume={soundVolumes.collision}
+        />
+        <RetroCollisionRack
+          trigger={globalPlayer.collision}
+          intensity={intensity}
+          volume={soundVolumes.collision}
+        />
       </div>
       {/*-------TOUCH CONTROLS------*/}
       {(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && globalPlayer.alive) ?

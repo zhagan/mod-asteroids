@@ -3,7 +3,7 @@ import { Box} from "@mui/material";
 import HudHeader from "../../components/HudHeader"
 import HudFooter from "../../components/HudFooter"
 
-export default function Hud({gameState, setGameState, setGlobalPlayer}) {
+export default function Hud({gameState, setGameState, setGlobalPlayer, onQuit}) {
   return (
     <Box sx={{
         display: 'flex',
@@ -13,7 +13,7 @@ export default function Hud({gameState, setGameState, setGlobalPlayer}) {
         left: '0px'
       }}>
         <HudHeader gameState={gameState} setGameState={setGameState} />
-        <HudFooter setGameState={setGameState} setGlobalPlayer={setGlobalPlayer} />
+        <HudFooter setGameState={setGameState} setGlobalPlayer={setGlobalPlayer} onQuit={onQuit} />
     </Box>
   );
 }

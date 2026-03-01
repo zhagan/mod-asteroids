@@ -13,7 +13,7 @@ import {
 } from '@mode-7/mod';
 
 // RetroFire: short, punchy, retro gunshot effect
-export function RetroFire({ trigger, intensity = 1 }) {
+export function RetroFire({ trigger, intensity = 1, volume = 1 }) {
   const osc = useModStream();
   const noise = useModStream();
   const mixed = useModStream();
@@ -22,6 +22,7 @@ export function RetroFire({ trigger, intensity = 1 }) {
   const env = useModStream();
   const lfoVca = useModStream();
   const flanger = useModStream();
+  const vcaOut = useModStream();
 
   const adsrControlRef = useRef();
   const adsrParams = useMemo(() => ({
@@ -77,7 +78,8 @@ export function RetroFire({ trigger, intensity = 1 }) {
       <Flanger input={filtered} output={flanger}/>
       {/* VCA for amplitude envelope */}
       <VCA input={flanger} output={vca} cv={env} />
-      <Monitor input={vca} />
+      <VCA input={vca} output={vcaOut} gain={volume} />
+      <Monitor input={vcaOut} />
     </>
   );
 }

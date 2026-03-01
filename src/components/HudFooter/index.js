@@ -3,9 +3,13 @@ import { Box, Grid, Typography } from "@mui/material";
 import Auth from "../../utils/auth";
 import { baseGameState } from "../../utils/gameStateDefaults";
 
-export default function HudFooter({ setGameState, setGlobalPlayer }) {
+export default function HudFooter({ setGameState, setGlobalPlayer, onQuit }) {
 
     const handleQuit = () => {
+        if (onQuit) {
+            onQuit();
+            return;
+        }
         setGameState(old => ({
             ...old,
             lives: 0,

@@ -12,17 +12,20 @@ import {
 } from '@mode-7/mod';
 
 // RetroCollision: short, impactful, retro collision sound
-export function RetroCollision({ trigger, intensity = 1 }) {
+export function RetroCollision({ trigger, intensity = 1, volume = 1 }) {
   const osc = useModStream();
   const noise = useModStream();
   const noise1 = useModStream();
   const mixed = useModStream();
   const filtered = useModStream();
   const vca = useModStream();
+  const vca1 = useModStream();
+  const vca2 = useModStream();
   const env = useModStream();
   const controlsRef = useRef();
 
   const [randomSeed, setRandomSeed] = React.useState([Math.random(), Math.random(), Math.random()]);
+  const [oldTrigger, setOldTrigger] = React.useState(0);
 
   const adsrParams = useMemo(() => ({
     attack: 0.001,
@@ -34,21 +37,25 @@ export function RetroCollision({ trigger, intensity = 1 }) {
   // Lower base frequency, more pitch drop for a "thud"
   const baseFreq = useMemo(() => 110 + 60 * intensity, [intensity]);
   const oscPitchMod = useMemo(() => 180 + 60 * intensity, [intensity]);
-
+  // const randomSeed = useMemo(() => [Math.random(), Math.random(), Math.random()], []);
   useEffect(() => {
-      setRandomSeed([Math.random(), Math.random(), Math.random()]);
+      // set random seed on each trigger to add variation to the sound (different decay, filter cutoff, etc)
+      // with a minimum value to avoid very quiet sounds  
+      setRandomSeed([Math.max(Math.random(), 0.25), Math.max(Math.random(), 0.25), Math.max(Math.random(), 0.25)]);
   }, [trigger])
 
   useEffect(() => {
-    if (trigger && controlsRef.current) {
+    if (trigger && oldTrigger !== trigger && controlsRef.current) {
+      console.log('collision - ', trigger);
       controlsRef.current.release = 1.0 * randomSeed[0];
-      controlsRef.current.sustain = 1.0 * randomSeed[1];
+      // controlsRef.current.sustain = 1.0 * randomSeed[1];
       controlsRef.current.trigger();
+      setOldTrigger(trigger);
       setTimeout(() => {
           controlsRef.current.releaseGate();
       },  10 * randomSeed[1]);
     }
-  }, [trigger, randomSeed]);
+  }, [trigger, randomSeed, oldTrigger]);
 
   return (
     <>
@@ -84,7 +91,9 @@ export function RetroCollision({ trigger, intensity = 1 }) {
       />
       {/* VCA for amplitude envelope */}
       <VCA input={filtered} output={vca} cv={env} />
-      <Monitor input={vca} />
+      <VCA input={vca} output={vca1} gain={2} />
+      <VCA input={vca1} output={vca2} gain={volume} />
+      <Monitor input={vca2} />
     </>
   );
 }

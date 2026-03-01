@@ -12,7 +12,7 @@ import {
 } from '@mode-7/mod';
 
 // RetroCollision: short, impactful, retro collision sound
-export function RetroTurn({ trigger, intensity = 1 }) {
+export function RetroTurn({ trigger, intensity = 1, volume = 1 }) {
   const osc = useModStream();
   const noise = useModStream();
   const filtered1 = useModStream();
@@ -50,7 +50,7 @@ export function RetroTurn({ trigger, intensity = 1 }) {
       <Mixer inputs={[filtered, filtered1]} output={mixed} levels={[0.4, 0.2]} />
       <Filter input={mixed} output={filtered2} type="lowpass" cutoff={2000} />
 
-      <VCA input={filtered2} output={vca} gain={gate} />
+      <VCA input={filtered2} output={vca} gain={gate * volume} />
       <Monitor input={vca} />
     </>
   );

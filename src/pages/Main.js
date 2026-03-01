@@ -6,6 +6,8 @@ const Main = ({
   setGameState,
   setMenuSoundState,
   menuSoundstate,
+  soundVolumes,
+  setSoundVolumes,
 }) => {
 
   // if (!Auth.loggedIn()) {
@@ -18,6 +20,8 @@ const Main = ({
         setMenuSoundState={setMenuSoundState}
         setGameState={setGameState}
         gameState={gameState}
+        soundVolumes={soundVolumes}
+        setSoundVolumes={setSoundVolumes}
       />
   );
 };

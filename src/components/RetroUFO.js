@@ -10,9 +10,10 @@ import {
 } from '@mode-7/mod';
 
 // RetroCollision: short, impactful, retro collision sound
-export function RetroUFO({ trigger, intensity = 1 }) {
+export function RetroUFO({ trigger, intensity = 1, volume = 1 }) {
   const vca = useModStream();
   const vca1 = useModStream();
+  const vca2 = useModStream();
   const oscOut = useModStream();
   const pitchOut = useModStream();
   const clockOut = useModStream();
@@ -67,7 +68,8 @@ export function RetroUFO({ trigger, intensity = 1 }) {
       <ToneGenerator output={oscOut} frequency={110} cv={pitchOut} cvAmount={100} waveform="sawtooth"/>
       <VCA input={oscOut} output={vca} cv={gateOut}/>
       <VCA input={vca} output={vca1} gain={gate} />
-      <Monitor input={vca1} />
+      <VCA input={vca1} output={vca2} gain={volume} />
+      <Monitor input={vca2} />
     </>
   );
 }
